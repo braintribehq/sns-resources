@@ -1,0 +1,61 @@
+String aws_key_id = "access-key-id"
+String aws_key_secret = "secret-access-key"
+String artifactoryCredentialsId = "artifactory-write"
+
+String region = "eu-central-1"
+String clusterName = "cluster"
+String kubecfg = "${clusterName}.config"
+String dbCredentialsId = "${clusterName}_database_credentials"
+
+String scmPipelineDir = 'scmPipeline'
+
+pipeline {
+  // run pipeline in Docker image (which contains all required tools) which is built on-the-fly, see Dockerfile in repo
+  agent {
+    dockerfile {
+      filename "${scmPipelineDir}/terraform/Dockerfile"
+      registryUrl 'https://docker.artifactory.braintribe.com'
+      args '--entrypoint=""'
+      registryCredentialsId artifactoryCredentialsId
+    }
+  }
+
+  stages {
+    stage('Initialize') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials("${aws_key_id}");
+        AWS_SECRET_ACCESS_KEY = credentials("${aws_key_secret}");
+        AWS_DEFAULT_REGION = "${region}"
+      }
+      steps {
+        dir("${scmPipelineDir}/terraform") {
+          sh "rm terraform.tfstate* || exit 0"
+          sh "aws --version"
+          sh "terraform --version"
+          sh "terraform init -backend-config=\"key=terraformstates/${clusterName}\""
+          }
+      }
+    }
+
+    stage('Deploy infrastructure') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials("${aws_key_id}");
+        AWS_SECRET_ACCESS_KEY = credentials("${aws_key_secret}");
+        AWS_DEFAULT_REGION = "${region}"
+      }
+      steps {
+        echo "### Deploying cluster ${clusterName}"
+        dir("${scmPipelineDir}/terraform") {
+          withCredentials([usernamePassword(credentialsId: dbCredentialsId, passwordVariable: 'dbPass', usernameVariable: 'dbUser')]) {
+            sh "terraform plan -var \"deployment_name=${clusterName}\" -var \"database_username=${dbUser}\" -var \"database_password=${dbPass}\""
+            input('Please review changes above. Do you want to apply these changes?')
+            sh "terraform apply -auto-approve -var \"deployment_name=${clusterName}\" -var \"database_username=${dbUser}\" -var \"database_password=${dbPass}\""
+        	}
+          sh "aws eks update-kubeconfig --name ${clusterName} --kubeconfig ${kubecfg}"
+          sh "kubectl --kubeconfig=${kubecfg} get ns"
+          echo "### Cluster ${clusterName} ready"
+        }
+      }
+    }
+  }
+}
