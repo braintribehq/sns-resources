@@ -49,7 +49,7 @@ module "eks" {
 
   map_users = [
     {
-      userarn  = "arn:aws:iam::012405793350:user/automation"
+      userarn  = "arn:aws:iam::000000:user/automation"
       username = "automation"
       groups   = ["system:masters"]
     }
