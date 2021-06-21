@@ -1,6 +1,9 @@
 ## General info
-1. we assume that there is an alias `k=kubectl`
-1. we assume admin access to the cluster is configured
+1. We assume that there is an alias `k=kubectl`
+1. We assume admin access to the cluster is configured, you can create needed k8s config using the [aws](https://aws.amazon.com/cli/) tool this way:
+```
+aws eks update-kubeconfig --name ${clusterName} --kubeconfig ${kubeConfigName}
+```
 
 ## Deploy Traefik
 1. deploy Traefik

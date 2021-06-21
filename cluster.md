@@ -18,7 +18,7 @@
 * create target group, instance port is `30080/http`
 * use port `30880/http`, path `/ping` for the health check - health check will fail until Traefik ingress is deployed in the cluster
 * include both nodes in the TG (or you can associate it in ASG config)
-* once Traefik is deployed check that both nodes are listed as healthy
+* once Traefik is deployed (first step in [operator.md](https://github.com/braintribehq/sns-resources/blob/main/operator.md)) check that both nodes are listed as healthy
 
 ## Application Load Balancer
 * create an ALB

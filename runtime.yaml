@@ -50,5 +50,5 @@ spec:
         memory: 1Gi
     type: services
   databaseType: local
-  domain: staging.tribefire.cloud
+  domain: your.domain
 
