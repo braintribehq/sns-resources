@@ -35,4 +35,4 @@
 * ...
 
 ## Included terraform resources
-Please read through the `terraform` folder, it includes what we used some time ago for a test cluster. The script itself will probably not work because of outdated versions and missing automation but parameters used for various resources should provide some value. We are also including a Dockerfile and a Jenkinsfile to show how we automate this.
+Please read through the `terraform` folder, it includes what we used some time ago for a test cluster. The script itself will not work because of missing automation framework but parameters used for various resources should provide some value.
