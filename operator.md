@@ -50,7 +50,7 @@ tfcloud-operator-646dfdbf88-9l4hc   1/1     Running   1          1d
 ```
 
 ## Deploy Tribefire
-1. edit your domain name in `runtime.yaml`
+1. edit your domain name in `runtime.yaml`, use the CNAME you created during cluster setup
 1. deploy Tribefire into the namespace where the tfcloud-operator is running
 ```
 k apply -f runtime.yaml 

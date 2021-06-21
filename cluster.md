@@ -6,15 +6,15 @@
 * create 3 private subnets, 3 public subnets, NAT gw
 
 ## EKS cluster
-* last tested with `1.18`
+* please use k8s version `1.17`
 * for the demo deployment create 1 node group with 2 t3.medium nodes, 30 GB of SSD storage per node
 * use private subnets for the cluster
 * auto scaling group should be created for the node group
-* allow access to ports 30080/TCP and 30880/TCP
 * setup auth configmap
-* allow a safe IP access to API
+* allow access to the cluster API from secure IP (we use VPN IP)
 
 ## Target Group
+* allow access to ports `30080/TCP` and `30880/TCP` in the EKS cluster (30080 is an http traffic port, 30880 is used for health check)
 * create target group, instance port is `30080/http`
 * use port `30880/http`, path `/ping` for the health check - health check will fail until Traefik ingress is deployed in the cluster
 * include both nodes in the TG (or you can associate it in ASG config)
@@ -22,7 +22,7 @@
 
 ## Application Load Balancer
 * create an ALB
-* issue new SSL certifcate for the ALB
+* issue new SSL certificate for the ALB
 * point traffic to the TG created in the previous step
 * create new DNS CNAME to access the ALB, setup HTTP -> HTTPS redirect, custom error page
 

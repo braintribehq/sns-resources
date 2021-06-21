@@ -13,7 +13,7 @@ module "eks" {
   subnets                              = module.vpc.private_subnets
   cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = [""]
+  cluster_endpoint_public_access_cidrs = ["12.34.56.78/32"]
 
   manage_aws_auth = true
 
