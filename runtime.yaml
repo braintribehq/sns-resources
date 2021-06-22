@@ -2,7 +2,7 @@ apiVersion: tribefire.cloud/v1alpha1
 kind: TribefireRuntime
 metadata:
   name: tfdemo-stable
-  namespace: msv
+  namespace: ns
 spec:
   backend:
     type: etcd
