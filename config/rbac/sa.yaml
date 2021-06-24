@@ -1,0 +1,9 @@
+#
+# Used to deploy in the default namespace - this MUST not be done until the general design decision to deploy in a particular namespace is changed
+#
+# Until this is not done: THIS IS NOT ALLOWED TO BE DEPLOYED
+#
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tfcloud-operator

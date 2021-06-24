@@ -1,0 +1,110 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: tfcloud-operator-webhooks
+rules:
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: tfcloud-operator
+  namespace: @@NAMESPACE@@
+rules:
+- apiGroups:
+    - admissionregistration.k8s.io
+  resources:
+    - mutatingwebhookconfigurations
+    - validatingwebhookconfigurations
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+- apiGroups:
+  - tribefire.cloud
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - serviceaccounts
+  verbs:
+  - "*"
+- apiGroups:
+  - "rbac.authorization.k8s.io"
+  resources:
+    - roles
+    - rolebindings
+  verbs:
+    - "*"
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - "*"
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - "*"
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: tfcloud-operator-webhooks-@@NAMESPACE@@
+subjects:
+  - kind: ServiceAccount
+    name: tfcloud-operator
+    namespace: @@NAMESPACE@@
+roleRef:
+  kind: ClusterRole
+  name: tfcloud-operator-webhooks
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: tfcloud-operator
+  namespace: @@NAMESPACE@@
+subjects:
+- kind: ServiceAccount
+  name: tfcloud-operator
+  namespace: @@NAMESPACE@@
+roleRef:
+  kind: Role
+  name: tfcloud-operator
+  apiGroup: rbac.authorization.k8s.io
