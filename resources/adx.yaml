@@ -7,28 +7,30 @@ metadata:
   name: adx-dev
   namespace: adx
 spec:
-  backend: {}
+  backend:
+    parameters:
+    - name: url
+      value: http://tf-etcd-cluster-client:2379
+    type: etcd
   components:
-  - env:
-    - name: ENVIRONMENT_SPECIFIC_URL_REWRITE_RULES
-      value: |-
-        RewriteRule  ^/control-center/(.*)$  /$1
-        RewriteRule  ^/control-center$  /control-center/ [R,L]
-    image: __DOCKER_IMAGE_PREFIX__/tribefire-control-center
-    imageTag: __DOCKER_IMAGE_TAG__
+  - apiPath: /control-center
+    image: docker.artifactory.braintribe.com/releases/adx/2.6.278-p1/tribefire-control-center
+    imageTag: latest
+    logJson: "true"
+    logLevel: INFO
     name: tribefire-control-center
     protocol: https
+    replicas: 1
     resources: {}
     type: control-center
-  - env:
-    - name: ENVIRONMENT_SPECIFIC_URL_REWRITE_RULES
-      value: |-
-        RewriteRule  ^/explorer/(.*)$  /$1
-        RewriteRule  ^/explorer$  /explorer/ [R,L]
-    image: __DOCKER_IMAGE_PREFIX__/tribefire-explorer
-    imageTag: __DOCKER_IMAGE_TAG__
+  - apiPath: /explorer
+    image: docker.artifactory.braintribe.com/releases/adx/2.6.278-p1/tribefire-explorer
+    imageTag: latest
+    logJson: "true"
+    logLevel: INFO
     name: tribefire-explorer
     protocol: https
+    replicas: 1
     resources: {}
     type: explorer
   - env:
@@ -39,7 +41,7 @@ spec:
     - name: ADX_DEFAULT_STORAGE_CACHE_TYPE
       value: s3
     - name: ADX_DEFAULT_S3_BUCKETNAME
-      value: bt-tf-sre-adx-staging
+      value: __S3_BUCKET_NAME__
     - name: ADX_DEFAULT_S3_PATH_PREFIX
       value: adx
     - name: ADX_DEFAULT_S3_ACCESS_KEY
@@ -53,9 +55,9 @@ spec:
     - name: ADX_DEFAULT_CACHE_S3_PATH_PREFIX
       value: adx-cache
     - name: ADX_DEFAULT_CACHE_S3_ACCESS_KEY
-      value: ${decrypt('__S3_CACHE_ACCESS_KEY_ENCRYPTED__')}
+      value: ${decrypt('__S3_ACCESS_KEY_ENCRYPTED__')}
     - name: ADX_DEFAULT_CACHE_S3_SECRET_ACCESS_KEY
-      value: ${decrypt('__S3_CACHE_SECRET_ENRYPTED__')}
+      value: ${decrypt('__S3_SECRET_ENCRYPTED__')}
     - name: ADX_DEFAULT_CACHE_S3_REGION
       value: eu_central_1
     - name: ADX_DEFAULT_DB_HOST
@@ -75,11 +77,11 @@ spec:
     - name: ADX_WB_COMMON_RESOURCES_PATH
       value: ${TRIBEFIRE_STORAGE_DIR}/databases/access.adx.content.wb/resources
     - name: CONV_DB_PASSWORD
-      value: __CONV_DB_PASSWORD_ENCRYPTED__
+      value: __DB_PASSWORD_ENCRYPTED__
     - name: CONV_DB_URL
       value: jdbc:postgresql://__DATABASE_HOST__:5432/__DATABASE_NAME__
     - name: CONV_DB_USER
-      value: __CONV_DB_USER__
+      value: __DB_USER__
     - name: CONV_INITIALIZE
       value: "true"
     - name: CONV_STORAGE_TYPE
@@ -92,16 +94,13 @@ spec:
       value: "true"
     - name: ELASTIC_SERVICE_DATA_PATH
       value: /opt/tribefire/mnt/elastic
-    - name: ENVIRONMENT_SPECIFIC_URL_REWRITE_RULES
-      value: |-
-        RewriteRule  ^/services/(.*)$  /$1
-        RewriteRule  ^/services$  /services/ [R,L]
     - name: TRIBEFIRE_ADDITIONAL_OPTIONS
       value: -Xms1g -Xmx5g
     - name: TRIBEFIRE_LANDING_PAGE_URL
       value: component/home
-    image: __DOCKER_IMAGE_PREFIX__/tribefire-master
-    imageTag: __DOCKER_IMAGE_TAG__
+    image: docker.artifactory.braintribe.com/releases/adx/2.6.278-p1/tribefire-master
+    imageTag: latest
+    logJson: "true"
     logLevel: FINE
     name: tribefire-master
     protocol: https
@@ -111,18 +110,17 @@ spec:
         cpu: "5"
         memory: 8Gi
       requests:
-        cpu: "500m"
+        cpu: 500m
         memory: 3Gi
     type: services
-  - env:
-    - name: ENVIRONMENT_SPECIFIC_URL_REWRITE_RULES
-      value: |-
-        RewriteRule  ^/web-reader/(.*)$  /$1
-        RewriteRule  ^/web-reader$  /web-reader/ [R,L]
-    image: __DOCKER_IMAGE_PREFIX__/tribefire-web-reader
-    imageTag: __DOCKER_IMAGE_TAG__
+  - apiPath: /web-reader
+    image: docker.artifactory.braintribe.com/releases/adx/2.6.278-p1/tribefire-web-reader
+    imageTag: latest
+    logJson: "true"
+    logLevel: INFO
     name: tribefire-web-reader
     protocol: https
+    replicas: 1
     resources: {}
     type: web-reader
   databaseType: local
@@ -131,3 +129,4 @@ spec:
       name: database-credentials
     instanceDescriptor: jdbc:postgresql://__DATABASE_HOST__:5432/__DATABASE_NAME__
   domain: __DOMAIN__
+
