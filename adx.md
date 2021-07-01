@@ -57,8 +57,8 @@
 
 
 ## Create k8s secrets
-1. Run the helper script to create secrets `resources/create-additional-db-credentials.sh -n adx -u database_user -p encrypted_database_password -- database_credentials`
-2. Verify that credentials have been created `kubectl -n adx get secret database_credentials`
+1. Run the helper script to create secrets `resources/create-additional-db-credentials.sh -n adx -u database_user -p encrypted_database_password -- database-credentials`
+2. Verify that credentials have been created `kubectl -n adx get secret database-credentials`
 
 ## Configure the Tribefire Runtime
 1. We are going to edit the file `resources/adx.yaml`
