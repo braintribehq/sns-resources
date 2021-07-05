@@ -48,7 +48,7 @@ pipeline {
           sh "rm terraform.tfstate* || exit 0"
           sh "aws --version"
           sh "terraform --version"
-          sh "terraform init -backend-config=\"key=tfstates/${clusterName}\""
+          sh "terraform init -backend-config=\"key=bt-tfstates/${clusterName}\""
           }
       }
     }
