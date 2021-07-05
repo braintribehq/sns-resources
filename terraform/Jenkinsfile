@@ -63,7 +63,7 @@ pipeline {
         dir("${scmPipelineDir}/terraform") {
           sh "terraform plan -var \"deployment_name=${clusterName}\""
           input('Please review changes above. Do you want to apply these changes?')
-          sh "terraform apply -auto-approve -var \"deployment_name=${clusterName}\" -var \"database_username=${dbUser}\" -var \"database_password=${dbPass}\""
+          sh "terraform apply -auto-approve -var \"deployment_name=${clusterName}\""
           sh "aws eks update-kubeconfig --name ${clusterName} --kubeconfig ${kubecfg}"
           sh "kubectl --kubeconfig=${kubecfg} get ns"
           echo "### Cluster ${clusterName} ready"
