@@ -9,11 +9,11 @@ provider "kubernetes" {
 module "eks" {
   source                               = "terraform-aws-modules/eks/aws"
   cluster_name                         = local.cluster_name
-  cluster_version                      = "1.18"
+  cluster_version                      = "1.17"
   subnets                              = module.vpc.private_subnets
   cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = ["12.34.56.78/32"]
+  cluster_endpoint_public_access_cidrs = ["85.216.154.240/32"]
 
   manage_aws_auth = true
 
@@ -23,6 +23,7 @@ module "eks" {
 
   tags = {
     Environment = "nonprod"
+    DeploymentName = "module.eks.cluster_id"
     CreatedBy = "terraform"
   }
 
@@ -42,6 +43,7 @@ module "eks" {
       instance_type = "t3a.medium"
       k8s_labels = {
         Environment = "dev"
+        DeploymentName = module.eks.cluster_id
         CreatedBy = "terraform"
       }
     }
@@ -49,8 +51,8 @@ module "eks" {
 
   map_users = [
     {
-      userarn  = "arn:aws:iam::000000:user/automation"
-      username = "automation"
+      userarn  = "arn:aws:iam::012405793350:user/matus.svrcek"
+      username = "matus"
       groups   = ["system:masters"]
     }
   ]

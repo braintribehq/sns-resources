@@ -1,0 +1,74 @@
+String aws_key_id = "uc_aws_eks_access_key_id"
+String aws_key_secret = "uc_aws_eks_secret_access_key"
+String artifactoryCredentialsId = "artifactory_read"
+
+String region = "eu-central-1"
+String clusterName = "snsdemo"
+String kubecfg = "${clusterName}.config"
+
+String scmPipelineDir = 'scmPipeline'
+
+//pipeline related config
+String maxBuildsToKeep = 5;
+String maxDaysToKeepBuilds = 5;
+int timeoutInMinutes = 45;
+
+pipeline {
+  // run pipeline in Docker image (which contains all required tools) which is built on-the-fly, see Dockerfile in repo
+  agent {
+    dockerfile {
+      filename "${scmPipelineDir}/terraform/Dockerfile"
+      registryUrl 'https://docker.artifactory.braintribe.com'
+      args '--entrypoint=""'
+      registryCredentialsId artifactoryCredentialsId
+    }
+  }
+  
+  options {
+    // enable maximum number of builds in build history and maximum number of days to keep builds
+    buildDiscarder(logRotator(numToKeepStr: "${maxBuildsToKeep}", daysToKeepStr: "${maxDaysToKeepBuilds}"))
+    // disable concurrent builds
+    disableConcurrentBuilds()
+    // enable timeout after specified number of minutes
+    timeout(time: timeoutInMinutes, unit: 'MINUTES')
+    // enable timestamps in logs
+    timestamps()
+  }
+
+  stages {
+    stage('Initialize') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials("${aws_key_id}");
+        AWS_SECRET_ACCESS_KEY = credentials("${aws_key_secret}");
+        AWS_DEFAULT_REGION = "${region}"
+      }
+      steps {
+        dir("${scmPipelineDir}/terraform") {
+          sh "rm terraform.tfstate* || exit 0"
+          sh "aws --version"
+          sh "terraform --version"
+          sh "terraform init -backend-config=\"key=tfstates/${clusterName}\""
+          }
+      }
+    }
+
+    stage('Deploy infrastructure') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials("${aws_key_id}");
+        AWS_SECRET_ACCESS_KEY = credentials("${aws_key_secret}");
+        AWS_DEFAULT_REGION = "${region}"
+      }
+      steps {
+        echo "### Deploying cluster ${clusterName}"
+        dir("${scmPipelineDir}/terraform") {
+          sh "terraform plan -var \"deployment_name=${clusterName}\""
+          input('Please review changes above. Do you want to apply these changes?')
+          sh "terraform apply -auto-approve -var \"deployment_name=${clusterName}\" -var \"database_username=${dbUser}\" -var \"database_password=${dbPass}\""
+          sh "aws eks update-kubeconfig --name ${clusterName} --kubeconfig ${kubecfg}"
+          sh "kubectl --kubeconfig=${kubecfg} get ns"
+          echo "### Cluster ${clusterName} ready"
+        }
+      }
+    }
+  }
+}
