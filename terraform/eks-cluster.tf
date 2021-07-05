@@ -3,11 +3,12 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
-  version                = "~> 1.11"
+  version                = "1.13.3"
 }
 
 module "eks" {
   source                               = "terraform-aws-modules/eks/aws"
+  version                              = "13.2.1"
   cluster_name                         = local.cluster_name
   cluster_version                      = "1.17"
   subnets                              = module.vpc.private_subnets

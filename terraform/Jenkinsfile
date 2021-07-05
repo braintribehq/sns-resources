@@ -33,6 +33,7 @@ pipeline {
     timeout(time: timeoutInMinutes, unit: 'MINUTES')
     // enable timestamps in logs
     timestamps()
+    ansiColor('xterm')
   }
 
   stages {
