@@ -11,7 +11,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL
 
 #terraform
 #ARG TERRAFORM_VERSION=0.11.14
-ARG TERRAFORM_VERSION=0.12.29
+ARG TERRAFORM_VERSION=0.12.31
 RUN curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
   && unzip terraform* \
   && mv terraform /usr/local/bin/ \
