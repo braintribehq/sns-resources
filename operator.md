@@ -37,7 +37,8 @@ tf-etcd-cluster-5rbj4s2jgg       1/1     Running   0          1d
 ## Deploy tfcloud-operator
 2. deploy the tfcloud-operator into the namespace `ns`
 ```
-operator/deploy-operator.sh -v -n ns -u docker_user -p docker_pass -e3 -t 0.7.27 -f
+cd operator
+./deploy-operator.sh -v -n ns -u docker_user -p docker_pass -e3 -t 0.8.0 -f
 ```
 3. after the command completes you should see 3 etcd pods and tfcloud-operator running in the namespace `ns`:
 ```
