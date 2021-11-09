@@ -6,7 +6,7 @@
 * create 3 private subnets, 3 public subnets, NAT gw
 
 ## EKS cluster
-* please use k8s version `1.17`
+* please use k8s version `1.19`
 * for the demo deployment create 1 node group with 2 t3.medium nodes, 30 GB of SSD storage per node
 * use private subnets for the cluster
 * auto scaling group should be created for the node group
