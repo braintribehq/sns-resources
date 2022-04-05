@@ -89,6 +89,7 @@ spec:
         - --metrics.prometheus.entrypoint=traefik
         - --ping=true
         - --logLevel=INFO
+        - --respondingtimeouts.idletimeout=10m0s
         image: traefik:1.7.30
         name: traefik-ingress
       serviceAccountName: traefik-ingress-controller
