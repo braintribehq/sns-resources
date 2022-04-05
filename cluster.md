@@ -28,7 +28,8 @@
 
 ## Next steps (not needed for the demo)
 * logging and monitoring with CloudWatch
-* metrics server in the cluster 
+* metrics server in the cluster
+  * `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
 * PV provisioning for the EKS cluster
 * setup WAF
 * ALB access logs + Athena
